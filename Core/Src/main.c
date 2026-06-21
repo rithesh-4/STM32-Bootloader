@@ -64,7 +64,7 @@ static void JumpToApplication(void)
     {
         void (*app_reset_handler)(void);
 
-        app_reset_handler = (void *)appEntry;
+        app_reset_handler = (void (*)(void))appEntry;
 
         SCB->VTOR = 0x08008000;
 
@@ -72,6 +72,7 @@ static void JumpToApplication(void)
 
         app_reset_handler();
     }
+
 }
 
 /* USER CODE END 0 */
@@ -115,6 +116,7 @@ int main(void)
   }
 
 
+  __disable_irq(); /*This should later be disabled in the application function, cause some HAL Library functions use SysTick, which needs Interrupts to be working.*/
 
   JumpToApplication();
 
