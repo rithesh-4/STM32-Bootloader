@@ -1,4 +1,4 @@
-	/* USER CODE BEGIN Header */
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file           : main.c
@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "metadata.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -75,6 +76,31 @@ static void JumpToApplication(void)
 
 }
 
+void Metadata_WriteTestData(void)
+{
+    HAL_FLASH_Unlock();
+
+    FLASH_EraseInitTypeDef eraseInit;
+    uint32_t sectorError;
+
+    eraseInit.TypeErase = FLASH_TYPEERASE_SECTORS;
+    eraseInit.Sector = FLASH_SECTOR_1;
+    eraseInit.NbSectors = 1;
+    eraseInit.VoltageRange = FLASH_VOLTAGE_RANGE_3;
+
+    HAL_FLASHEx_Erase(&eraseInit, &sectorError);
+
+    HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD,
+    				  METADATA_ADDRESS,
+                      FW_VALID_FLAG);
+
+    HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD,
+                      METADATA_ADDRESS + 4,
+                      0x1000);
+
+    HAL_FLASH_Lock();
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -108,8 +134,22 @@ int main(void)
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
 
+
+
   for(int i = 0; i < 30; i++)
   {
+	  volatile GPIO_PinState StayInBoot = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0);
+
+	    if (StayInBoot == GPIO_PIN_SET)
+	    {
+	        while(1)
+	        {
+	          HAL_GPIO_WritePin(GPIOD,GPIO_PIN_12,GPIO_PIN_RESET);
+	      	  HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+	      	  HAL_Delay(50);
+	        }
+	    }
+
       HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
       HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
       HAL_Delay(100);
@@ -118,7 +158,18 @@ int main(void)
 
   __disable_irq(); /*This should later be disabled in the application function, cause some HAL Library functions use SysTick, which needs Interrupts to be working.*/
 
-  JumpToApplication();
+
+  if (Metadata_IsValid())
+  {
+      JumpToApplication();
+  }
+  else
+  {
+      while (1)
+      {
+          // Stay in bootloader
+      }
+  }
 
   /* USER CODE END 2 */
 
@@ -188,11 +239,17 @@ static void MX_GPIO_Init(void)
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOH_CLK_ENABLE();
-  __HAL_RCC_GPIOD_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12|GPIO_PIN_14, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin : PA0 */
+  GPIO_InitStruct.Pin = GPIO_PIN_0;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PD12 PD14 */
   GPIO_InitStruct.Pin = GPIO_PIN_12|GPIO_PIN_14;
