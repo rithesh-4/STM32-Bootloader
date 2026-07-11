@@ -1,28 +1,55 @@
 /*
  * metadata.c
  *
- *  Created on: 21-Jun-2026
+ *  Created on: 11-Jul-2026
  *      Author: ramri
  */
 
-// metadata.c
-
 #include "metadata.h"
+/**
+ * @brief Returns a pointer to the metadata stored in Flash.
+ */
+const firmware_metadata_t* Metadata_Get(void)
+{
+    return (const firmware_metadata_t*)METADATA_ADDRESS;
+}
 
-static const firmware_metadata_t *metadata = (firmware_metadata_t *)METADATA_ADDRESS;
-
+/**
+ * @brief Validates firmware metadata.
+ */
 bool Metadata_IsValid(void)
 {
-    if(metadata->valid_flag != FW_VALID_FLAG)
+    const firmware_metadata_t *metadata = Metadata_Get();
+
+    /* Check valid flag */
+    if (metadata->valid_flag != FW_VALID_FLAG)
     {
         return false;
     }
 
-    if(metadata->firmware_size == 0)
+    /* Check application start address */
+    if (metadata->app_start_address != APP_START_ADDRESS)
+    {
+        return false;
+    }
+
+    /* Check firmware size */
+    if ((metadata->firmware_size == 0U) || (metadata->firmware_size > APP_MAX_SIZE))
+    {
+        return false;
+    }
+
+    /* CRC verification will be added in a later step */
+
+
+
+    /* Check application's initial stack pointer */
+    uint32_t appStack = *(volatile uint32_t *)APP_START_ADDRESS;
+
+    if ((appStack < RAM_START_ADDRESS) || (appStack > RAM_END_ADDRESS))
     {
         return false;
     }
 
     return true;
 }
-
