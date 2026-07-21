@@ -30,4 +30,7 @@
 #define APP_END_ADDRESS             0x080FFFFFU
 #define APP_MAX_SIZE                (APP_END_ADDRESS - APP_START_ADDRESS + 1U)
 
+/*Register Data*/
+#define NVIC_REGISTER_COUNT    8U
+
 #endif
