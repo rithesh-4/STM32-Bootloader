@@ -9,6 +9,7 @@
 #include "main.h"
 #include "memory_map.h"
 #include "metadata.h"
+#include "image_manager.h"
 
 /*Static Function Prototypes*/
 
@@ -41,7 +42,7 @@ static void BootManager_Process(void){
 		  HAL_Delay(100);
 	  }
 
-	  if (Metadata_IsValid())
+	  if (Image_IsBootable())
 		  {
 			  JumpToApplication();
 		  }

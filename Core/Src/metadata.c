@@ -42,14 +42,5 @@ bool Metadata_IsValid(void)
     /* CRC verification will be added in a later step */
 
 
-
-    /* Check application's initial stack pointer */
-    uint32_t appStack = *(volatile uint32_t *)APP_START_ADDRESS;
-
-    if ((appStack < RAM_START_ADDRESS) || (appStack > RAM_END_ADDRESS))
-    {
-        return false;
-    }
-
     return true;
 }
