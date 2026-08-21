@@ -45,10 +45,12 @@ Core/
 Middlewares/
   detools/               Delta update library
     heatshrink/          Compression decoder
+NodeMCU_Files/
+  UART_Firmware/          Arduino sketch for NodeMCU UART bridge (firmware upload)
 Drivers/
-  STM32F4xx_HAL_Driver/  HAL peripheral drivers
-  CMSIS/                 ARM CMSIS headers
-STM32F407VGTX_FLASH.ld   Linker script (1MB flash)
+  STM32F4xx_HAL_Driver/   HAL peripheral drivers
+  CMSIS/                  ARM CMSIS headers
+STM32F407VGTX_FLASH.ld    Linker script (1MB flash)
 ```
 
 ## Building
