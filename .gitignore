@@ -1,10 +1,37 @@
+# STM32CubeIDE build artifacts
 Debug/
 Release/
+*.elf
+*.map
+*.list
+*.hex
+*.bin
 *.o
 *.d
-*.elf
-*.bin
-*.hex
-*.list
-*.map
+*.cyclo
+*.su
+
+# STM32CubeIDE project files (keep .cproject, .project for portability)
 .settings/
+*.launch
+
+# STM32CubeMX generated files (regenerable)
+*.mxproject
+
+# Editor/IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp

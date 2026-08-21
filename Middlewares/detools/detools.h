@@ -46,6 +46,8 @@ extern "C" {
 #define DETOOLS_CONFIG_COMPRESSION_LZMA        0
 #define DETOOLS_CONFIG_FILE_IO                 0
 
+/*The above two definitions are part of this bootloader project only and are not included as part of the detools official library*/
+
 #ifndef DETOOLS_CONFIG_FILE_IO
 #    define DETOOLS_CONFIG_FILE_IO                 1
 #endif
